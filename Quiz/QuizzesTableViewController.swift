@@ -11,7 +11,6 @@ import UIKit
 struct Quiz: Codable {
     let id: Int
     let question: String
-    let answer: String?
     let author: Usuario?
     let attachment: Attachment?
     var favourite: Bool
@@ -36,6 +35,7 @@ class QuizzesTableViewController: UITableViewController {
     let URLBASE = "https://quiz2019.herokuapp.com/api/quizzes?token=01c808eacecfa87b3766"
     var quizzes = [Quiz]()
     var imagesCache = [String:UIImage]()
+    var httpResponseCode = false
 
     
     override func viewDidLoad() {
@@ -76,7 +76,7 @@ class QuizzesTableViewController: UITableViewController {
             download(quiz.attachment?.url ?? "", index: indexPath)
             
         }
-        cell.imageFav.tag = indexPath.row
+        cell.id = indexpath.row
         if quiz.favourite == false {
             cell.imageFav.imageView?.image = UIImage(named: "star")
         } else {
@@ -136,16 +136,73 @@ class QuizzesTableViewController: UITableViewController {
     }
     
     @IBAction func Fav(_ sender: UIButton) {
+
+        let cell = sender.superview?.superview as! QuizzesTableViewCell
+        let indexPath = tableView.indexpath(for: cell)
         
-        if quizzes[sender.tag].favourite == false {
-            quizzes[sender.tag].favourite = true
+        if quizzes[cell.id].favourite == false {
+            if reqPUT(quizzes[cell.id].id) {
+                quizzes[cell.id].favourite = true
+            }
         } else {
-            quizzes[sender.tag].favourite = false
+            if reqDELETE(quizzes[cell.id].id){
+                quizzes[cell.id].favourite = false
+            }
         }
-        tableView.reloadData()
+        self.httpResponseCode = false
+        self.tableView.reloadRows(at: [indexpath], with: .fade)
     }
- 
+
+    func reqPUT(_ id: Int) -> Bool {
+        let urlPUT = "https://quiz2019.herokuapp.com/api/users/tokenOwner/favourites/\(id)?token=01c808eacecfa87b3766"
+        guard let url = URL(string: urlPUT) else {
+            return false
+        }
+        var urlReq = URLRequest(url: url)
+        urlReq.httpMethod = "PUT"
+
+        let config = URLSessionConfiguration.default
+        let session = URLSession(configuration: config)
+
+        let task = session.dataTask(with: urlReq, complemetionHandler: {
+            (data, response, error) in
+            if let response = response {
+                let httpResponse = response as! HTTPURLResponse
+                if httpResponse.statusCode == 200 {
+                    self.httpResponseCode = true
+                }
+            }
+            })
+
+        task.resume()
+        return self.httpResponseCode
+    }
     
+func reqDELETE(_ id: Int) -> Bool {
+        let urlDELETE = "https://quiz2019.herokuapp.com/api/users/tokenOwner/favourites/\(id)?token=01c808eacecfa87b3766"
+        guard let url = URL(string: urlDELETE) else {
+            return false
+        }
+        var urlReq = URLRequest(url: url)
+        urlReq.httpMethod = "DELETE"
+
+        let config = URLSessionConfiguration.default
+        let session = URLSession(configuration: config)
+
+        let task = session.dataTask(with: urlReq, complemetionHandler: {
+            (data, response, error) in
+            if let response = response {
+                let httpResponse = response as! HTTPURLResponse
+                if httpResponse.statusCode == 200 {
+                    self.httpResponseCode = true
+                }
+            }
+            })
+
+        task.resume()
+        return self.httpResponseCode
+    }
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "Show Quiz" {
             if let qvc = segue.destination as? QuizzesViewController {

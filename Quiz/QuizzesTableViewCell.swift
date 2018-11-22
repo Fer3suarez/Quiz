@@ -18,5 +18,5 @@ class QuizzesTableViewCell: UITableViewCell {
     
     @IBOutlet weak var imageFav: UIButton!
     
-    
+    var id: Int!
 }

@@ -26,7 +26,7 @@ class AuthorViewController: UIViewController {
         super.viewDidLoad()
         
         title = author
-        authorLabel.text = "Username: \(author!)"
+        authorLabel.text = "Username: \(author ?? "")"
         idLabel.text = "Id: \(id!)"
         isAdminLabel.text = "Is Admin: \(isAdmin ?? false)"
 

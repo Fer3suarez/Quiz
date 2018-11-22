@@ -14,7 +14,7 @@ struct Quiz: Codable {
     let answer: String?
     let author: Usuario?
     let attachment: Attachment?
-    let favourite: Bool
+    var favourite: Bool
     let tips: [String]?
 }
 
@@ -37,6 +37,7 @@ class QuizzesTableViewController: UITableViewController {
     var quizzes = [Quiz]()
     var imagesCache = [String:UIImage]()
 
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -74,6 +75,12 @@ class QuizzesTableViewController: UITableViewController {
             
             download(quiz.attachment?.url ?? "", index: indexPath)
             
+        }
+        cell.imageFav.tag = indexPath.row
+        if quiz.favourite == false {
+            cell.imageFav.imageView?.image = UIImage(named: "star")
+        } else {
+            cell.imageFav.imageView?.image = UIImage(named: "fav")
         }
 
         return cell
@@ -127,6 +134,17 @@ class QuizzesTableViewController: UITableViewController {
         quizzes.removeAll()
         downloadAllQuizzes(URLBASE)
     }
+    
+    @IBAction func Fav(_ sender: UIButton) {
+        
+        if quizzes[sender.tag].favourite == false {
+            quizzes[sender.tag].favourite = true
+        } else {
+            quizzes[sender.tag].favourite = false
+        }
+        tableView.reloadData()
+    }
+ 
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "Show Quiz" {

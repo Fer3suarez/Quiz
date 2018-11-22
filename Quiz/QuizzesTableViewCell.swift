@@ -16,4 +16,7 @@ class QuizzesTableViewCell: UITableViewCell {
     
     @IBOutlet weak var questionLabel: UILabel!
     
+    @IBOutlet weak var imageFav: UIButton!
+    
+    
 }

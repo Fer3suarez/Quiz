@@ -12,7 +12,7 @@ struct Usuario : Codable {
     
     let id: Int?
     let isAdmin: Bool?
-    let username: String
+    let username: String?
 }
 
 class AutoresTableViewController: UITableViewController {

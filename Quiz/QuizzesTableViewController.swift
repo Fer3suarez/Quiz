@@ -76,7 +76,7 @@ class QuizzesTableViewController: UITableViewController {
             download(quiz.attachment?.url ?? "", index: indexPath)
             
         }
-        cell.id = indexpath.row
+        cell.id = indexPath.row
         if quiz.favourite == false {
             cell.imageFav.imageView?.image = UIImage(named: "star")
         } else {
@@ -138,7 +138,7 @@ class QuizzesTableViewController: UITableViewController {
     @IBAction func Fav(_ sender: UIButton) {
 
         let cell = sender.superview?.superview as! QuizzesTableViewCell
-        let indexPath = tableView.indexpath(for: cell)
+        let indexPath = tableView.indexPath(for: cell)
         
         if quizzes[cell.id].favourite == false {
             if reqPUT(quizzes[cell.id].id) {
@@ -150,7 +150,7 @@ class QuizzesTableViewController: UITableViewController {
             }
         }
         self.httpResponseCode = false
-        self.tableView.reloadRows(at: [indexpath], with: .fade)
+        self.tableView.reloadRows(at: [indexPath!], with: .fade)
     }
 
     func reqPUT(_ id: Int) -> Bool {
@@ -164,8 +164,8 @@ class QuizzesTableViewController: UITableViewController {
         let config = URLSessionConfiguration.default
         let session = URLSession(configuration: config)
 
-        let task = session.dataTask(with: urlReq, complemetionHandler: {
-            (data, response, error) in
+        let task = session.dataTask(with: urlReq, completionHandler: {
+            (_, response, _) in
             if let response = response {
                 let httpResponse = response as! HTTPURLResponse
                 if httpResponse.statusCode == 200 {
@@ -189,8 +189,8 @@ func reqDELETE(_ id: Int) -> Bool {
         let config = URLSessionConfiguration.default
         let session = URLSession(configuration: config)
 
-        let task = session.dataTask(with: urlReq, complemetionHandler: {
-            (data, response, error) in
+        let task = session.dataTask(with: urlReq, completionHandler: {
+            (_, response, _) in
             if let response = response {
                 let httpResponse = response as! HTTPURLResponse
                 if httpResponse.statusCode == 200 {
